@@ -1,62 +1,50 @@
 import SwiftUI
 import WebKit
 
-struct BrowserView: View {
-    @State private var urlString: String = ""
-    @State private var showingAlert = false
+struct ContentView: View {
+    @State private var urlString = ""
     @State private var webView: WKWebView?
-    
+
     var body: some View {
-        NavigationView {
-            VStack {
-                TextField("Enter URL", text: $urlString, onCommit: {
-                    if let url = URL(string: self.urlString) {
-                        self.load(url: url)
-                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                    } else {
-                        self.showingAlert = true
-                    }
-                })
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+        VStack {
+            TextField("Enter URL", text: $urlString, onCommit: loadWebPage)
                 .padding()
-                
-                if let webView = webView {
-                    WebView(webView: webView)
-                } else {
-                    Text("Loading...")
-                }
-                
-                Spacer()
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .autocapitalization(.none)
+            
+            if let webView = webView {
+                WebView(webView: webView)
             }
-            .navigationBarTitle(Text(urlString), displayMode: .inline)
         }
-        .alert(isPresented: $showingAlert) {
-            Alert(title: Text("Invalid URL"), message: Text("Please enter a valid URL"), dismissButton: .default(Text("OK")))
-        }
+        .onAppear(perform: {
+            let webView = WKWebView()
+            self.webView = webView
+            loadWebPage()
+        })
+        .padding()
     }
     
-    private func load(url: URL) {
-        let webView = WKWebView()
-        let request = URLRequest(url: url)
-        webView.load(request)
-        self.webView = webView
+    func loadWebPage() {
+        if let url = URL(string: urlString) {
+            let request = URLRequest(url: url)
+            webView?.load(request)
+        }
     }
 }
 
-struct WebView: UIViewRepresentable {
+struct WebView: NSViewRepresentable {
     let webView: WKWebView
     
-    func makeUIView(context: Context) -> WKWebView {
+    func makeNSView(context: Context) -> WKWebView {
         return webView
     }
     
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        // Update the view
+    func updateNSView(_ nsView: WKWebView, context: Context) {
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        BrowserView()
+        ContentView()
     }
 }
