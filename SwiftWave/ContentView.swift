@@ -4,7 +4,7 @@ import WebKit
 struct BrowserView: View {
     @State private var urlString: String = ""
     @State private var showingAlert = false
-    @State private var webView: WKWebView = WKWebView()
+    @State private var webView: WKWebView?
     
     var body: some View {
         NavigationView {
@@ -20,11 +20,13 @@ struct BrowserView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 
-                WebView(webView: webView)
-                    .navigationBarTitle(Text(urlString), displayMode: .inline)
-                    .alert(isPresented: $showingAlert) {
-                        Alert(title: Text("Invalid URL"), message: Text("Please enter a valid URL"), dismissButton: .default(Text("OK")))
-                    }
+                if let webView = webView {
+                    WebView(webView: webView)
+                        .edgesIgnoringSafeArea(.bottom)
+                        .navigationBarTitle(Text(urlString), displayMode: .inline)
+                } else {
+                    Text("Loading...")
+                }
                 
                 Spacer()
             }
@@ -32,8 +34,10 @@ struct BrowserView: View {
     }
     
     private func load(url: URL) {
+        let webView = WKWebView()
         let request = URLRequest(url: url)
         webView.load(request)
+        self.webView = webView
     }
 }
 
