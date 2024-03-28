@@ -10,7 +10,6 @@ struct ContentView: View {
             TextField("Enter URL", text: $urlString, onCommit: loadWebPage)
                 .padding()
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                .autocapitalization(.none)
             
             if let webView = webView {
                 WebView(webView: webView)
