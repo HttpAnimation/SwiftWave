@@ -21,7 +21,7 @@ struct ContentView: View {
                 }
             }
             .padding()
-            .navigationBarTitle("Browser")
+            .navigationTitle("Browser")
         }
         .onAppear(perform: {
             let webView = WKWebView()
