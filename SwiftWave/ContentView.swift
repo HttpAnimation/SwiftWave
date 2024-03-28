@@ -22,14 +22,16 @@ struct BrowserView: View {
                 
                 if let webView = webView {
                     WebView(webView: webView)
-                        .edgesIgnoringSafeArea(.bottom)
-                        .navigationBarTitle(Text(urlString), displayMode: .inline)
                 } else {
                     Text("Loading...")
                 }
                 
                 Spacer()
             }
+            .navigationBarTitle(Text(urlString), displayMode: .inline)
+        }
+        .alert(isPresented: $showingAlert) {
+            Alert(title: Text("Invalid URL"), message: Text("Please enter a valid URL"), dismissButton: .default(Text("OK")))
         }
     }
     
