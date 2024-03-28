@@ -6,21 +6,28 @@ struct ContentView: View {
     @State private var webView: WKWebView?
 
     var body: some View {
-        VStack {
-            TextField("Enter URL", text: $urlString, onCommit: loadWebPage)
-                .padding()
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-            
-            if let webView = webView {
-                WebView(webView: webView)
+        NavigationView {
+            VStack {
+                TextField("Enter URL", text: $urlString, onCommit: loadWebPage)
+                    .padding()
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                if let webView = webView {
+                    List {
+                        WebViewRow(webView: webView)
+                    }
+                } else {
+                    Spacer()
+                }
             }
+            .padding()
+            .navigationBarTitle("Browser")
         }
         .onAppear(perform: {
             let webView = WKWebView()
             self.webView = webView
             loadWebPage()
         })
-        .padding()
     }
     
     func loadWebPage() {
@@ -28,6 +35,15 @@ struct ContentView: View {
             let request = URLRequest(url: url)
             webView?.load(request)
         }
+    }
+}
+
+struct WebViewRow: View {
+    let webView: WKWebView
+    
+    var body: some View {
+        WebView(webView: webView)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
